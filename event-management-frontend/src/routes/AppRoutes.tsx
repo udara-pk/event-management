@@ -1,18 +1,23 @@
 import { Routes, Route } from "react-router-dom";
-import Dashboard from "../pages/Dashboard";
-import EventDetail from "../pages/EventDetail";
-import EventForm from "../pages/EventForm";
-import UserProfile from "../pages/UserProfile";
+import { Suspense, lazy } from "react";
 import React from "react";
 
+// Lazy-loaded pages
+const Dashboard = lazy(() => import("../pages/Dashboard"));
+const EventDetail = lazy(() => import("../pages/EventDetail"));
+const EventForm = lazy(() => import("../pages/EventForm"));
+const UserProfile = lazy(() => import("../pages/UserProfile"));
+
 const AppRoutes = () => (
-  <Routes>
-    <Route path="/" element={<Dashboard />} />
-    <Route path="/events/:id" element={<EventDetail />} />
-    <Route path="/events/:id/edit" element={<EventForm />} />
-    <Route path="/events/new" element={<EventForm />} />
-    <Route path="/profile" element={<UserProfile />} />
-  </Routes>
+  <Suspense fallback={<div>Loading...</div>}>
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/events/:id" element={<EventDetail />} />
+      <Route path="/events/:id/edit" element={<EventForm />} />
+      <Route path="/events/new" element={<EventForm />} />
+      <Route path="/profile" element={<UserProfile />} />
+    </Routes>
+  </Suspense>
 );
 
 export default AppRoutes;
