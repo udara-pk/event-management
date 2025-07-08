@@ -1,14 +1,16 @@
-package com.eventapp.event_management_backend.service;
+package com.eventapp.event_management_backend.service.impl;
 
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.eventapp.event_management_backend.domain.Event;
+import com.eventapp.event_management_backend.dto.EventFilterRequest;
 import com.eventapp.event_management_backend.dto.EventRequest;
 import com.eventapp.event_management_backend.dto.EventResponse;
 import com.eventapp.event_management_backend.repository.AttendanceRepository;
 import com.eventapp.event_management_backend.repository.EventRepository;
+import com.eventapp.event_management_backend.service.EventService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -89,6 +91,20 @@ public class EventServiceImpl implements EventService {
         return eventRepository.findByHostId(userId).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventResponse> filterEvents(EventFilterRequest filter, int page, int size) {
+        List<Event> events = eventRepository.findAll().stream()
+                .filter(e -> filter.getStartAfter() == null || !e.getStartTime().isBefore(filter.getStartAfter()))
+                .filter(e -> filter.getEndBefore() == null || !e.getEndTime().isAfter(filter.getEndBefore()))
+                .filter(e -> filter.getLocation() == null || e.getLocation().equalsIgnoreCase(filter.getLocation()))
+                .filter(e -> filter.getVisibility() == null || e.getVisibility() == filter.getVisibility())
+                .skip((long) page * size)
+                .limit(size)
+                .toList();
+
+        return events.stream().map(this::toResponse).collect(Collectors.toList());
     }
 
     private EventResponse toResponse(Event event) {
