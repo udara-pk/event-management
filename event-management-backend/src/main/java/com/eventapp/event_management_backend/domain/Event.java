@@ -39,6 +39,9 @@ public class Event {
     @UpdateTimestamp
     private Instant updatedAt;
 
+    @Column(nullable = false)
+    private boolean archived = false;
+
     public enum Visibility {
         PUBLIC, PRIVATE
     }

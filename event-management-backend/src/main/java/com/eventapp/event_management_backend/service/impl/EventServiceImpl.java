@@ -55,6 +55,16 @@ public class EventServiceImpl implements EventService {
         return toResponse(eventRepository.save(event));
     }
 
+    // @Override
+    // public void deleteEvent(UUID eventId, UUID userId) {
+    //     Event event = eventRepository.findById(eventId)
+    //             .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+    //     if (!event.getHostId().equals(userId)) {
+    //         throw new SecurityException("Unauthorized to delete event");
+    //     }
+    //     eventRepository.delete(event);
+    // }
+
     @Override
     public void deleteEvent(UUID eventId, UUID userId) {
         Event event = eventRepository.findById(eventId)
@@ -62,7 +72,15 @@ public class EventServiceImpl implements EventService {
         if (!event.getHostId().equals(userId)) {
             throw new SecurityException("Unauthorized to delete event");
         }
-        eventRepository.delete(event);
+        event.setArchived(true);
+        eventRepository.save(event);
+    }
+
+    @Override
+    public List<EventResponse> listEvents() {
+        return eventRepository.findAllActive().stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -72,12 +90,12 @@ public class EventServiceImpl implements EventService {
         return toResponse(event);
     }
 
-    @Override
-    public List<EventResponse> listEvents() {
-        return eventRepository.findAll().stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-    }
+    // @Override
+    // public List<EventResponse> listEvents() {
+    //     return eventRepository.findAll().stream()
+    //             .map(this::toResponse)
+    //             .collect(Collectors.toList());
+    // }
 
     @Override
     public List<EventResponse> listUpcomingEvents(int page, int size) {
