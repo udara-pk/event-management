@@ -3,6 +3,8 @@ package com.eventapp.event_management_backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
 
 import com.eventapp.event_management_backend.domain.Event;
 import com.eventapp.event_management_backend.dto.EventFilterRequest;
@@ -98,8 +100,10 @@ public class EventServiceImpl implements EventService {
     // }
 
     @Override
+    @Cacheable(value = "upcomingEvents", key = "#page + '-' + #size")
     public List<EventResponse> listUpcomingEvents(int page, int size) {
-        return eventRepository.findByStartTimeAfter(LocalDateTime.now()).stream()
+        return eventRepository.findByStartTimeAfterAndArchivedFalse(LocalDateTime.now(), PageRequest.of(page, size))
+                .stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
