@@ -60,7 +60,7 @@ public class EventController {
         return ResponseEntity.ok(eventService.listUserEvents(userId));
     }
 
-        @GetMapping("/filter")
+    @GetMapping("/filter")
     public ResponseEntity<List<EventResponse>> filterEvents(
             @ModelAttribute EventFilterRequest filter,
             @RequestParam int page,
