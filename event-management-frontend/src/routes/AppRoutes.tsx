@@ -3,6 +3,7 @@ import Dashboard from "../pages/Dashboard";
 import EventDetail from "../pages/EventDetail";
 import EventForm from "../pages/EventForm";
 import UserProfile from "../pages/UserProfile";
+import React from "react";
 
 const AppRoutes = () => (
   <Routes>

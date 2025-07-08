@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios";
 import { Event } from "../types/Event";
 import React from "react";
+import { toast } from "react-toastify";
 
 const defaultForm: Partial<Event> = {
   title: "",
@@ -40,19 +41,27 @@ const EventForm = () => {
       setError("Please fill required fields");
       return;
     }
-
+  
     setLoading(true);
     setError(null);
-
+  
+    // Optimistically redirect & show toast
+    toast.info(isEdit ? "Updating event..." : "Creating event...");
+    navigate("/"); // ⏩ Optimistic navigation
+  
     try {
       if (isEdit) {
         await api.put(`/events/${id}`, form);
+        toast.success("Event updated successfully!");
       } else {
         await api.post("/events", form);
+        toast.success("Event created successfully!");
       }
-      navigate("/");
     } catch (err) {
-      setError("Failed to save event");
+      toast.error("Error saving event. Please try again.");
+      console.error(err);
+      // ⏪ Optional: redirect back to form if it failed
+      navigate(isEdit ? `/events/${id}/edit` : "/events/new");
     } finally {
       setLoading(false);
     }

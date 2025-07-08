@@ -13,18 +13,22 @@ const Dashboard = () => {
   }, [dispatch]);
 
   return (
-    <div className="dashboard">
+    <div className="container">
       <h2>Upcoming Events</h2>
       {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {events.map(event => (
-        <div key={event.id}>
-          <Link to={`/events/${event.id}`}>
-            <h4>{event.title}</h4>
-          </Link>
-          <p>{event.location} | {new Date(event.startTime).toLocaleDateString()}</p>
+      {events.length > 0 && (
+        <div className="event-grid">
+          {events.map(event => (
+            <div key={event.id}>
+              <Link to={`/events/${event.id}`}>
+                <h4>{event.title}</h4>
+              </Link>
+              <p>{event.location}</p>
+              <p>{new Date(event.startTime).toLocaleDateString()}</p>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 };
